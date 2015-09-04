@@ -1,17 +1,20 @@
 import copy
 import math
 
-def col_distance(a):
+def tableDistance(a):
 	score = 0
 	for i in range(0, len(a)):
-		for j in range(0, len(a)):
-			for k in range(1, len(a)-j):
-				#print("%d:%d" % (a[i][j], a[i][j+k]))
-				score += abs(a[i][j]-a[i][j+k])
-	#print("Total Score: %d" % score)
+		score += colDistance(a, i)
+	return score
+
+def colDistance(a, i):
+	score = 0
+	for j in range(0, len(a)):
+		for k in range(1, len(a)-j):
+			score += abs(a[i][j]-a[i][j+k])
 	return score
 	
-def check_square(a):
+def checkSquare(a):
 	if sqrt(a) - floor(sqrt(a)) != 0:
 		return 0
 	return 1
@@ -40,13 +43,14 @@ def zero(a):
 	#	exit()
 	#newA = [sqrt(a)]
 	#for i = 0
-	currentScore = col_distance(a)
+	currentScore = tableDistance(a)
 	index = [-1]
 	score = [99999999999]
 	pickLeastBadDouble(a, index, score)
 	
 	if score[0] > currentScore:
 		unity(a)
+		#at this point need to pick a column and zero it
 		pickLeastBadDouble(a, index, score)
 		a = doubleRow(a, index[0])
 	else:
@@ -64,8 +68,8 @@ def pickLeastBadDouble(a, index, score):
 	score[0] = 99999999999
 	index[0] = -1
 	for i in range(0, len(a)):
-		if col_distance(doubleRow(a, i)) < score[0]:
-			score[0] = col_distance(doubleRow(a, i))
+		if tableDistance(doubleRow(a, i)) < score[0]:
+			score[0] = tableDistance(doubleRow(a, i))
 			index[0] = i
 	
 #decrement each column until it contains at least one 1
