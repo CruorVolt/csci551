@@ -1,11 +1,14 @@
 from operator import itemgetter
+from random import randrange
+import time
+import matplotlib.pyplot as plt
 
 
 def argmax(items):
     return max(enumerate(items), key=itemgetter(1))
 
 
-def global_alignment(ref, seq, match=1, mismatch=-1, gap=-1):
+def global_alignment(ref, seq, match=1, mismatch=0, gap=0):
     # add garbage character to beginning of strings to ease indexing
     ref = "-"+ref
     seq = "-"+seq
@@ -50,15 +53,29 @@ def global_alignment(ref, seq, match=1, mismatch=-1, gap=-1):
     return ref_out, seq_out, S, P
 
 
+def random_sequence(length):
+    bases = ['A', 'C', 'T', 'G']
+    return ''.join([bases[randrange(4)] for i in range(length)])
+
 if __name__ == "__main__":
-    ref, seq, S, P = global_alignment("APPLE", "HAPPE")
-    print ref
-    print seq
-    print ""
-    print "S"
-    for row in S:
-        print row
-    print ""
-    print "P"
-    for row in P:
-        print row
+    lengths = [10, 100, 1000, 10000, 100000, 1000000]
+    iterations = 100
+    avgs = [0]
+    for l in lengths:
+        avg = 0
+        for i in range(iterations):
+            ref = random_sequence(l)
+            seq = random_sequence(l)
+            start = time.time()
+            ref, seq, S, P = global_alignment("APPLE", "HAPPE")
+            stop = time .time()
+            avg += (stop-start)*1000000
+        avgs.append(avg/iterations)
+    plt.plot(avgs, 'ro')
+    m = max(avgs)
+    d = 50-m%50
+    plt.axis([1, len(lengths), 0, m+d])
+    plt.ylabel('Average Run-Time (microseconds)')
+    plt.xlabel('Sequence Length (10^X)')
+    plt.title('Average Global Alignment Run-Times')
+    plt.show()
